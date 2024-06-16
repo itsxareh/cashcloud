@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:drawableRight="@drawable/baseline_arrow_right_24"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="user"
+            android:text="Username"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black"
             android:gravity="center_vertical" />

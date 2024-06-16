@@ -40,6 +40,8 @@ public class IntroActivity extends AppCompatActivity {
         transaction.commit();
         Log.d(TAG, "Navigated to fragment: " + fragment.getClass().getSimpleName());
     }
+
+
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {

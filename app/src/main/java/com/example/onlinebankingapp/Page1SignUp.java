@@ -31,10 +31,8 @@ public class Page1SignUp extends Fragment {
         lastName = rootView.findViewById(R.id.createLastName);
         emailAddress = rootView.findViewById(R.id.createEmail);
 
-        // Initially disable the continue button
         continueButton.setEnabled(false);
 
-        // Check if any of the fields are empty to enable/disable the continue button
         firstName.addTextChangedListener(new SimpleTextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {

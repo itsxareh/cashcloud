@@ -42,11 +42,11 @@ public class WalletFragment extends Fragment {
         bankServiceButton = rootView.findViewById(R.id.bankServiceButton);
         cardsServiceButton = rootView.findViewById(R.id.cardsServiceButton);
         savingsServiceButton = rootView.findViewById(R.id.savingsServiceButton);
-        stocksServiceButton = rootView.findViewById(R.id.stocksServiceButton);
-        loadButton = rootView.findViewById(R.id.loadServiceButton);
-        billsButton = rootView.findViewById(R.id.billsServiceButton);
-        cryptoButton = rootView.findViewById(R.id.cryptoServiceButton);
-        moreButton = rootView.findViewById(R.id.moreServiceButton);
+//        stocksServiceButton = rootView.findViewById(R.id.stocksServiceButton);
+//        loadButton = rootView.findViewById(R.id.loadServiceButton);
+//        billsButton = rootView.findViewById(R.id.billsServiceButton);
+//        cryptoButton = rootView.findViewById(R.id.cryptoServiceButton);
+//        moreButton = rootView.findViewById(R.id.moreServiceButton);
 
         balanceAmount = rootView.findViewById(R.id.balanceAmount);
         balanceText = rootView.findViewById(R.id.balanceText);

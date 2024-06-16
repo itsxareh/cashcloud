@@ -36,7 +36,6 @@ public class Page3SignUp extends Fragment {
     Long timeoutSeconds = 60L;
     private String countryCode, phoneNumber, password, firstName, lastName, email;
     ProgressBar progressBar;
-    private EditText fullNameEditText, emailEditText;
     PhoneAuthProvider.ForceResendingToken resendingToken;
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private FirebaseFirestore db;

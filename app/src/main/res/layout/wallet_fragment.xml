@@ -167,34 +167,6 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Stocks -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_horizontal">
-
-            <ImageButton
-                android:id="@+id/stocksServiceButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/gray_border"
-                android:src="@drawable/baseline_stocks_24"
-                android:layout_marginBottom="6dp"/>
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="Stocks"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/cerebri_sans_semibold"
-                android:gravity="center" />
-        </LinearLayout>
-
         <!-- Load -->
         <LinearLayout
             android:layout_width="0dp"
@@ -223,89 +195,117 @@
                 android:gravity="center" />
         </LinearLayout>
 
-        <!-- Bills -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_horizontal">
+<!--        &lt;!&ndash; Bills &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:gravity="center_horizontal">-->
 
-            <ImageButton
-                android:id="@+id/billsServiceButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/gray_border"
-                android:src="@drawable/baseline_bills_24"
-                android:layout_marginBottom="6dp"/>
+<!--            <ImageButton-->
+<!--                android:id="@+id/billsServiceButton"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:background="@drawable/gray_border"-->
+<!--                android:src="@drawable/baseline_bills_24"-->
+<!--                android:layout_marginBottom="6dp"/>-->
 
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="Bills"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/cerebri_sans_semibold"
-                android:gravity="center" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Bills"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/cerebri_sans_semibold"-->
+<!--                android:gravity="center" />-->
+<!--        </LinearLayout>-->
 
-        <!-- Crypto -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_horizontal">
+<!--        &lt;!&ndash; Crypto &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:gravity="center_horizontal">-->
 
-            <ImageButton
-                android:id="@+id/cryptoServiceButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/gray_border"
-                android:src="@drawable/baseline_currency_bitcoin_24"
-                android:layout_marginBottom="6dp"/>
+<!--            <ImageButton-->
+<!--                android:id="@+id/cryptoServiceButton"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:background="@drawable/gray_border"-->
+<!--                android:src="@drawable/baseline_currency_bitcoin_24"-->
+<!--                android:layout_marginBottom="6dp"/>-->
 
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="Crypto"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/cerebri_sans_semibold"
-                android:gravity="center" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Crypto"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/cerebri_sans_semibold"-->
+<!--                android:gravity="center" />-->
+<!--        </LinearLayout>-->
+<!--        -->
+<!--        &lt;!&ndash; Stocks &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:gravity="center_horizontal">-->
 
-        <!-- More -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_horizontal">
+<!--            <ImageButton-->
+<!--                android:id="@+id/stocksServiceButton"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:background="@drawable/gray_border"-->
+<!--                android:src="@drawable/baseline_stocks_24"-->
+<!--                android:layout_marginBottom="6dp"/>-->
 
-            <ImageButton
-                android:id="@+id/moreServiceButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/gray_border"
-                android:src="@drawable/baseline_more_24"
-                android:layout_marginBottom="6dp"/>
+<!--            <TextView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Stocks"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/cerebri_sans_semibold"-->
+<!--                android:gravity="center" />-->
+<!--        </LinearLayout>-->
+<!--        -->
+<!--        &lt;!&ndash; More &ndash;&gt;-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_columnWeight="1"-->
+<!--            android:layout_rowWeight="1"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginBottom="12dp"-->
+<!--            android:gravity="center_horizontal">-->
 
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="More"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/cerebri_sans_semibold"
-                android:gravity="center" />
-        </LinearLayout>
+<!--            <ImageButton-->
+<!--                android:id="@+id/moreServiceButton"-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="60dp"-->
+<!--                android:background="@drawable/gray_border"-->
+<!--                android:src="@drawable/baseline_more_24"-->
+<!--                android:layout_marginBottom="6dp"/>-->
+
+<!--            <TextView-->
+<!--                android:layout_width="60dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="More"-->
+<!--                android:textColor="@color/gray"-->
+<!--                android:textSize="12sp"-->
+<!--                android:fontFamily="@font/cerebri_sans_semibold"-->
+<!--                android:gravity="center" />-->
+<!--        </LinearLayout>-->
 
     </GridLayout>
 
@@ -340,11 +340,11 @@
             android:layout_alignParentEnd="true"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginTop="12dp"
-            android:layout_below="@id/transactionsTitle"
             android:id="@+id/transactionRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="356dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/transactionsTitle"
+            android:layout_marginTop="12dp" />
 
     </RelativeLayout>
 </RelativeLayout>
