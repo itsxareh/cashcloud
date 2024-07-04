@@ -1,10 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".SavingsFragment">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <RelativeLayout
+        android:id="@+id/wallet_balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_margin="16dp"
+        android:background="@drawable/gray_border">
+
+        <TextView
+            android:id="@+id/moneySign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₱"
+            android:textSize="24sp"
+            android:fontFamily="@font/cerebri_sans"
+            android:textColor="@color/black" />
+        <TextView
+            android:id="@+id/balanceAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@id/moneySign"
+            android:textSize="24sp"
+            android:fontFamily="@font/cerebri_sans"
+            android:textColor="@color/black" />
+        <ImageButton
+            android:id="@+id/showBalanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_remove_red_eye_24"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@id/savingsText"
+            android:layout_marginRight="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+        <TextView
+            android:id="@+id/savingsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/moneySign"
+            android:fontFamily="@font/cerebri_sans"
+            android:text="Total savings"
+            android:textSize="10sp"
+            android:textColor="@color/gray" />
+
+            <Button
+                android:id="@+id/startSavingButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/savingsText"
+                android:drawableLeft="@drawable/baseline_green_savings_24"
+                android:drawableRight="@drawable/baseline_green_arrow_right_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:text="Start saving now"
+                android:paddingHorizontal="0dp"
+                android:fontFamily="@font/cerebri_sans"
+                android:textColor="@color/black"
+                android:gravity="center_vertical"/>
+
+    </RelativeLayout>
+</RelativeLayout>

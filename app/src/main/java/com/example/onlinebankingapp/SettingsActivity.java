@@ -34,7 +34,7 @@ public class SettingsActivity extends AppCompatActivity {
         termsAndConditionsSetting = findViewById(R.id.termsAndConditionsSetting);
         licenseSetting = findViewById(R.id.licenseSetting);
 
-        showNameSetting.setOnClickListener(v -> {});
+        showNameSetting.setOnClickListener(v -> {startActivity(new Intent(SettingsActivity.this, ShowName.class));});
         recoverSetting.setOnClickListener(v -> { startActivity(new Intent(SettingsActivity.this, AccountRecovery.class));});
         changePasswordSetting.setOnClickListener(v -> { startActivity(new Intent(SettingsActivity.this, ChangePassword.class));});
         closeAccountSetting.setOnClickListener(v -> {});

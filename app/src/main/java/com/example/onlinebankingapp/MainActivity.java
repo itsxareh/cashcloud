@@ -84,7 +84,9 @@ public class MainActivity extends AppCompatActivity {
 
         loadUserData();
     }
-
+    public ViewPager2 getViewPager() {
+        return viewPager;
+    }
     private void loadUserData() {
         userManager.getUserData(new UserManager.UserDataCallback() {
             @Override

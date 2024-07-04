@@ -3,6 +3,7 @@ package com.example.onlinebankingapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +31,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class PagePhoneVerification extends Fragment {
@@ -79,7 +80,6 @@ public class PagePhoneVerification extends Fragment {
 
             @Override
             public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-                // Save verification ID and resending token so we can use them later
                 PagePhoneVerification.this.verificationId = verificationId;
                 PagePhoneVerification.this.resendingToken = forceResendingToken;
                 setInProgress(false);
@@ -101,7 +101,6 @@ public class PagePhoneVerification extends Fragment {
         phoneNumberText.setText(phoneNumber);
         countryCodeText.setText(countryCode);
         verifyButton.setOnClickListener(v -> verifyCode());
-
         resendText.setOnClickListener(v -> resendVerificationCode());
 
         db = FirebaseFirestore.getInstance();
@@ -128,56 +127,80 @@ public class PagePhoneVerification extends Fragment {
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         setInProgress(true);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        setInProgress(false);
-                        if (task.isSuccessful()) {
-                            String userUID = mAuth.getCurrentUser().getUid();
-                            checkAndSaveUserData(userUID);
+                .addOnCompleteListener(task -> {
+                    setInProgress(false);
+                    if (task.isSuccessful()) {
+                        linkPhoneNumberToEmailAccount(credential);
+                    } else {
+                        String message = "Something went wrong, please try again later.";
+                        if (task.getException() != null) {
+                            message = task.getException().getMessage();
+                        }
+                        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void linkPhoneNumberToEmailAccount(PhoneAuthCredential credential) {
+        mAuth.getCurrentUser().linkWithCredential(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String userUID = task.getResult().getUser().getUid();
+                        checkAndSaveUserData(userUID);
+                    } else {
+                        String errorMessage = "Failed to link phone number.";
+                        if (task.getException() != null) {
+                            errorMessage = task.getException().getMessage();
+                        }
+                        if (errorMessage.contains("already been linked")) {
+                            checkAndSaveUserData(mAuth.getCurrentUser().getUid());
                         } else {
-                            String message = "Something went wrong, please try again later.";
-                            if (task.getException() != null) {
-                                message = task.getException().getMessage();
-                            }
-                            Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
-    private void checkAndSaveUserData(String userUID){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    private void checkAndSaveUserData(String userUID) {
         DocumentReference userRef = db.collection("users").document(userUID);
 
-        userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful() && task.getResult().exists()) {
-                    navigateToMainActivity(userUID);
-                } else {
-                    saveUserData(userUID);
-                }
+        userRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().exists()) {
+                navigateToMainActivity(userUID);
+            } else {
+                saveUserData(userUID);
             }
         });
     }
-    private void saveUserData(String userUID) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("fullName", fullName);
-        user.put("email", email);
-        user.put("countryCode", countryCode);
-        user.put("phoneNumber", phoneNumber);
-        user.put("password", password);
-        user.put("accounts", new HashMap<String, Boolean>());
 
-        db.collection("users")
-                .document(userUID)
-                .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    createDefaultAccounts(userUID);
-                })
-                .addOnFailureListener(e -> {
-                    Utility.showToast(getActivity(), "Failed to save user information: " + e.getMessage());
+    private void saveUserData(String userUID) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String newUserUID = task.getResult().getUser().getUid();
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("fullName", fullName);
+                        user.put("email", email);
+                        user.put("countryCode", countryCode);
+                        user.put("phoneNumber", phoneNumber);
+                        user.put("isEmailVerified", false);
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+                        user.put("password", hashedPassword);
+                        user.put("accounts", new HashMap<String, Boolean>());
+
+                        db.collection("users")
+                                .document(newUserUID)
+                                .set(user)
+                                .addOnSuccessListener(aVoid -> {
+                                    createDefaultAccounts(newUserUID);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Utility.showToast(getActivity(), "Failed to save user information: " + e.getMessage());
+                                });
+                    } else {
+                        Utility.showToast(getActivity(), "Failed to create user with email: " + task.getException().getMessage());
+                    }
                 });
     }
 
@@ -190,7 +213,6 @@ public class PagePhoneVerification extends Fragment {
         walletAccount.put("balance", 0.00);
         walletAccount.put("transactions", new HashMap<String, Boolean>());
 
-        // Create savings account
         Map<String, Object> savingsAccount = new HashMap<>();
         savingsAccount.put("userId", userUID);
         savingsAccount.put("accountType", "savings");
@@ -212,7 +234,6 @@ public class PagePhoneVerification extends Fragment {
     }
 
     private void updateUserAccountReferences(String userUID, String walletAccountId, String savingsAccountId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference userRef = db.collection("users").document(userUID);
 
         Map<String, Object> accountsUpdate = new HashMap<>();
@@ -227,24 +248,26 @@ public class PagePhoneVerification extends Fragment {
                     Utility.showToast(getActivity(), "Failed to update user account references: " + e.getMessage());
                 });
     }
+
     private void navigateToMainActivity(String userUID) {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("userId", userUID);
         startActivity(intent);
     }
+
     private void resendVerificationCode() {
         startResendTimer();
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(mAuth)
-                        .setPhoneNumber(phoneNumber)
-                        .setTimeout(60L, TimeUnit.SECONDS)
-                        .setActivity(getActivity())
-                        .setCallbacks(mCallbacks)
-                        .setForceResendingToken(resendingToken)
-                        .build();
+        PhoneAuthOptions options = PhoneAuthOptions.newBuilder(mAuth)
+                .setPhoneNumber(phoneNumber)
+                .setTimeout(60L, TimeUnit.SECONDS)
+                .setActivity(getActivity())
+                .setCallbacks(mCallbacks)
+                .setForceResendingToken(resendingToken)
+                .build();
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
+
     void startResendTimer() {
         resendText.setEnabled(false);
         new CountDownTimer(60000, 1000) {
@@ -258,8 +281,9 @@ public class PagePhoneVerification extends Fragment {
             }
         }.start();
     }
-    void setInProgress(boolean inProgress){
-        if (inProgress){
+
+    void setInProgress(boolean inProgress) {
+        if (inProgress) {
             progressBar.setVisibility(View.VISIBLE);
             verifyButton.setVisibility(View.GONE);
         } else {
@@ -268,5 +292,3 @@ public class PagePhoneVerification extends Fragment {
         }
     }
 }
-
-

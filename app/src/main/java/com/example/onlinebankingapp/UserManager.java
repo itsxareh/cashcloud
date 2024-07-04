@@ -2,13 +2,12 @@ package com.example.onlinebankingapp;
 
 import android.util.Log;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.List;
 import java.util.Map;
 
 public class UserManager {
@@ -30,19 +29,12 @@ public class UserManager {
         return instance;
     }
 
-    public interface UserDataCallback {
-        void onDataLoaded(Map<String, Object> userData);
-        void onFailure(Exception e);
+    public String getNewTransactionId() {
+        return db.collection("transactions").document().getId();
     }
 
-    public interface AccountDataCallback {
-        void onAccountLoaded(DocumentSnapshot accountData);
-        void onFailure(Exception e);
-    }
-
-    public interface TransactionsCallback {
-        void onTransactionsLoaded(List<DocumentSnapshot> transactions);
-        void onFailure(Exception e);
+    public Task<Void> addTransaction(String transactionId, Map<String, Object> transaction) {
+        return db.collection("transactions").document(transactionId).set(transaction);
     }
 
     public void getUserData(final UserDataCallback callback) {
@@ -87,18 +79,43 @@ public class UserManager {
                 });
     }
 
-    public void getUserTransactions(String accountId, final TransactionsCallback callback) {
-        db.collection("transactions")
-                .whereEqualTo("accountId", accountId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot querySnapshot = task.getResult();
-                        callback.onTransactionsLoaded(querySnapshot.getDocuments());
+    public void getTransaction(String transactionId, TransactionCallback callback) {
+        db.collection("transactions").document(transactionId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        double amount = documentSnapshot.getDouble("amount");
+                        Long dateTime = documentSnapshot.getLong("dateTime");
+                        if (dateTime == null) {
+                            dateTime = 0L;
+                        }
+                        String type = documentSnapshot.getString("type");
+                        String description = documentSnapshot.getString("description");
+                        String reference = documentSnapshot.getString("reference");
+
+                        AppTransaction transaction = new AppTransaction(amount, dateTime, type, description, reference);
+                        callback.onTransactionLoaded(transaction);
                     } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                        callback.onFailure(task.getException());
+                        callback.onTransactionLoaded(null);
                     }
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure(e);
                 });
+    }
+
+
+    public interface UserDataCallback {
+        void onDataLoaded(Map<String, Object> userData);
+        void onFailure(Exception e);
+    }
+
+    public interface AccountDataCallback {
+        void onAccountLoaded(DocumentSnapshot accountData);
+        void onFailure(Exception e);
+    }
+
+    public interface TransactionCallback {
+        void onTransactionLoaded(AppTransaction transaction);
+        void onFailure(Exception e);
     }
 }

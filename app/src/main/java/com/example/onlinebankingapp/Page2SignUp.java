@@ -53,10 +53,8 @@ public class Page2SignUp extends Fragment {
         adapter.setDropDownViewResource(R.layout.country_item);
         countryCodeSpinner.setAdapter(adapter);
 
-        // Disable continue button initially
         continueButton.setEnabled(false);
 
-        // Text changed listener for phone number and password
         phoneNumberEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

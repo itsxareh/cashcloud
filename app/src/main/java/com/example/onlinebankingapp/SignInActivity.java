@@ -46,6 +46,8 @@ import com.google.android.play.core.integrity.IntegrityTokenResponse;
 import com.google.android.play.core.integrity.IntegrityTokenRequest;
 import com.google.android.play.core.integrity.model.IntegrityErrorCode;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class SignInActivity extends AppCompatActivity {
     private Spinner countryCodeSpinner;
     private EditText loginPhoneNumber;
@@ -130,7 +132,6 @@ public class SignInActivity extends AppCompatActivity {
         db.collection("users")
                 .whereEqualTo("countryCode", countryCode)
                 .whereEqualTo("phoneNumber", phoneNumber)
-                .whereEqualTo("password", password)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -138,8 +139,14 @@ public class SignInActivity extends AppCompatActivity {
                         changeInProgress(false);
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                            String userUID = document.getId();
-                            sendOtpToPhoneNumber(phoneNumber, countryCode);
+                            String hashedPassword = document.getString("password");
+
+                            if (BCrypt.checkpw(password, hashedPassword)) {
+                                String userUID = document.getId();
+                                sendOtpToPhoneNumber(phoneNumber, countryCode);
+                            } else {
+                                Toast.makeText(SignInActivity.this, "Invalid phone number or password", Toast.LENGTH_SHORT).show();
+                            }
                         } else {
                             Toast.makeText(SignInActivity.this, "Invalid phone number or password", Toast.LENGTH_SHORT).show();
                         }

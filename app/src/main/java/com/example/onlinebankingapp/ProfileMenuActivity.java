@@ -19,8 +19,9 @@ import java.util.Map;
 
 public class ProfileMenuActivity extends AppCompatActivity {
     TextView profileName, profilePhoneNumber;
-    Button quickGuideMenu, favoritesMenu, settingsMenu;
+    Button quickGuideMenu, favoritesMenu, settingsMenu, logOutButton;
     UserManager userManager;
+    private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +33,25 @@ public class ProfileMenuActivity extends AppCompatActivity {
             return insets;
         });
 
+        mAuth = FirebaseAuth.getInstance();
         userManager = UserManager.getInstance();
-        quickGuideMenu = findViewById(R.id.quickGuideMenu);
-        favoritesMenu = findViewById(R.id.favoritesMenu);
-        settingsMenu = findViewById(R.id.settingsMenu);
-
-        settingsMenu.setOnClickListener(v -> startActivity(new Intent(ProfileMenuActivity.this, SettingsActivity.class)));
 
         profileName = findViewById(R.id.profileName);
         profilePhoneNumber = findViewById(R.id.profilePhoneNumber);
+
+        quickGuideMenu = findViewById(R.id.quickGuideMenu);
+        favoritesMenu = findViewById(R.id.favoritesMenu);
+        settingsMenu = findViewById(R.id.settingsMenu);
+        logOutButton = findViewById(R.id.logOutButton);
+
+        settingsMenu.setOnClickListener(v -> startActivity(new Intent(ProfileMenuActivity.this, SettingsActivity.class)));
+        logOutButton.setOnClickListener(v -> {
+            mAuth.signOut();
+            Intent intent = new Intent(ProfileMenuActivity.this, IntroActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        });
 
         loadUserData();
     }

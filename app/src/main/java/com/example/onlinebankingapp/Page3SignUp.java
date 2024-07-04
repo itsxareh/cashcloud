@@ -150,7 +150,6 @@ public class Page3SignUp extends Fragment {
         walletAccount.put("balance", 0.00);
         walletAccount.put("transactions", new HashMap<String, Boolean>());
 
-        // Create savings account
         Map<String, Object> savingsAccount = new HashMap<>();
         savingsAccount.put("userId", userUID);
         savingsAccount.put("accountType", "savings");

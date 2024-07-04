@@ -17,12 +17,12 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new WalletFragment();
             case 1:
                 return new SavingsFragment();
-//            case 2:
-//                return new CreditFragment();
-//            case 3:
-//                return new LoansFragment();
-//            case 4:
-//                return new CardsFragment();
+            case 2:
+                return new CreditFragment();
+            case 3:
+                return new LoansFragment();
+            case 4:
+                return new CardsFragment();
             default:
                 return new WalletFragment();
         }

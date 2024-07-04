@@ -16,37 +16,41 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class WalletFragment extends Fragment {
 
     Button cashInButton, sendButton;
-    ImageButton bankServiceButton, cardsServiceButton, savingsServiceButton,
-            stocksServiceButton, loadButton, billsButton, cryptoButton, moreButton;
+    ImageButton bankServiceButton, cardsServiceButton, savingsServiceButton, showBalanceButton,
+            stocksServiceButton, loadServiceButton, billsButton, cryptoButton, moreButton;
     TextView balanceAmount, balanceText, seeAllButton;
     RecyclerView transactionRecyclerView;
     TransactionAdapter transactionAdapter;
     UserManager userManager;
+    private List<AppTransaction> transactionList = new ArrayList<>();
+    private boolean isBalanceVisible = true;
+    private String currentBalance = "";
 
-    public WalletFragment () {
+    public WalletFragment() {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.wallet_fragment, container, false);
 
+        showBalanceButton = rootView.findViewById(R.id.showBalanceButton);
         cashInButton = rootView.findViewById(R.id.cashInButton);
         sendButton = rootView.findViewById(R.id.sendButton);
 
         bankServiceButton = rootView.findViewById(R.id.bankServiceButton);
         cardsServiceButton = rootView.findViewById(R.id.cardsServiceButton);
         savingsServiceButton = rootView.findViewById(R.id.savingsServiceButton);
-//        stocksServiceButton = rootView.findViewById(R.id.stocksServiceButton);
-//        loadButton = rootView.findViewById(R.id.loadServiceButton);
-//        billsButton = rootView.findViewById(R.id.billsServiceButton);
-//        cryptoButton = rootView.findViewById(R.id.cryptoServiceButton);
-//        moreButton = rootView.findViewById(R.id.moreServiceButton);
+        loadServiceButton = rootView.findViewById(R.id.loadServiceButton);
 
         balanceAmount = rootView.findViewById(R.id.balanceAmount);
         balanceText = rootView.findViewById(R.id.balanceText);
@@ -55,11 +59,47 @@ public class WalletFragment extends Fragment {
         transactionRecyclerView = rootView.findViewById(R.id.transactionRecyclerView);
         transactionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        cashInButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), CashInActivity.class)));
+        transactionAdapter = new TransactionAdapter(transactionList, getContext());
+        transactionRecyclerView.setAdapter(transactionAdapter);
 
+        cashInButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), CashInActivity.class)));
+        sendButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), SendActivity.class)));
+        seeAllButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), TransactionsActivity.class)));
         userManager = UserManager.getInstance();
 
         loadUserData();
+
+        cardsServiceButton.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.getViewPager().setCurrentItem(4);
+            }
+        });
+        savingsServiceButton.setOnClickListener(v -> {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            if (mainActivity != null) {
+                mainActivity.getViewPager().setCurrentItem(1);
+            }
+        });
+        loadServiceButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), ShopActivity.class)));
+        showBalanceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBalanceVisible) {
+                    balanceAmount.setText("••••••••");
+                    showBalanceButton.setImageResource(R.drawable.baseline_visibility_off_24);
+                } else {
+                    balanceAmount.setText(currentBalance);
+                    showBalanceButton.setImageResource(R.drawable.baseline_remove_red_eye_24);
+                }
+                isBalanceVisible = !isBalanceVisible;
+            }
+        });
+
+        if (getActivity().getIntent().getBooleanExtra("updateWallet", false)) {
+            getActivity().getIntent().removeExtra("updateWallet");
+            transactionAdapter.notifyDataSetChanged();
+        }
 
         return rootView;
     }
@@ -77,11 +117,16 @@ public class WalletFragment extends Fragment {
                                 if (accountData.exists() && "wallet".equals(accountData.getString("accountType"))) {
                                     Double balance = accountData.getDouble("balance");
                                     if (balance != null) {
-                                        balanceAmount.setText(String.format("%.2f", balance));
+                                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+                                        numberFormat.setMinimumFractionDigits(2);
+                                        numberFormat.setMaximumFractionDigits(2);
+                                        currentBalance = numberFormat.format(balance);
+                                        balanceAmount.setText(currentBalance);
                                     } else {
-                                        balanceAmount.setText("0.00");
+                                        currentBalance = "0.00";
+                                        balanceAmount.setText(currentBalance);
                                     }
-                                    loadUserTransactions(accountId);
+                                    loadTransactions(accountId);
                                 }
                             }
 
@@ -101,66 +146,73 @@ public class WalletFragment extends Fragment {
         });
     }
 
-
-    private void loadUserTransactions(String accountId) {
-        userManager.getUserTransactions(accountId, new UserManager.TransactionsCallback() {
+    private void loadTransactions(String accountId) {
+        transactionList.clear();
+        transactionAdapter.notifyDataSetChanged();
+        userManager.getAccountData(accountId, new UserManager.AccountDataCallback() {
             @Override
-            public void onTransactionsLoaded(List<DocumentSnapshot> transactions) {
-                transactionAdapter = new TransactionAdapter(transactions);
-                transactionRecyclerView.setAdapter(transactionAdapter);
+            public void onAccountLoaded(DocumentSnapshot accountData) {
+                if (accountData.exists() && accountData.contains("transactions")) {
+                    Object transactionsObj = accountData.get("transactions");
+                    if (transactionsObj instanceof List) {
+                        List<String> transactionIds = (List<String>) transactionsObj;
+                        if (transactionIds != null) {
+                            Collections.reverse(transactionIds);
+                            int count = 0;
+                            for (String transactionId : transactionIds) {
+                                if (count >= 3) {
+                                    break;
+                                }
+                                userManager.getTransaction(transactionId, new UserManager.TransactionCallback() {
+                                    @Override
+                                    public void onTransactionLoaded(AppTransaction transaction) {
+                                        transactionList.add(transaction);
+                                        Collections.sort(transactionList);
+                                        transactionAdapter.notifyDataSetChanged();
+                                    }
+
+                                    @Override
+                                    public void onFailure(Exception e) {
+                                        Utility.showToast(getActivity(), "Failed to load transaction: " + e.getMessage());
+                                    }
+                                });
+                                count++;
+                            }
+                        }
+                    } else if (transactionsObj instanceof Map) {
+                        Map<String, Object> transactionMap = (Map<String, Object>) transactionsObj;
+                        List<String> transactionIds = new ArrayList<>(transactionMap.keySet());
+                        Collections.reverse(transactionIds);
+                        int count = 0;
+                        for (String transactionId : transactionIds) {
+                            if (count >= 3) {
+                                break;
+                            }
+                            userManager.getTransaction(transactionId, new UserManager.TransactionCallback() {
+                                @Override
+                                public void onTransactionLoaded(AppTransaction transaction) {
+                                    transactionList.add(transaction);
+                                    Collections.sort(transactionList);
+                                    transactionAdapter.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onFailure(Exception e) {
+                                    Utility.showToast(getActivity(), "Failed to load transaction: " + e.getMessage());
+                                }
+                            });
+                            count++;
+                        }
+                    } else {
+                        Utility.showToast(getActivity(), "Unexpected data type for transactions field");
+                    }
+                }
             }
 
             @Override
             public void onFailure(Exception e) {
+                Utility.showToast(getActivity(), "Failed to get account data: " + e.getMessage());
             }
         });
-    }
-
-    private class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-        private List<DocumentSnapshot> transactions;
-
-        public TransactionAdapter(List<DocumentSnapshot> transactions) {
-            this.transactions = transactions;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transaction, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            DocumentSnapshot transaction = transactions.get(position);
-            holder.bind(transaction);
-        }
-
-        @Override
-        public int getItemCount() {
-            return transactions.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            TextView transactionType, transactionDate, transactionAmount, transactionDescription;
-
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                transactionType = itemView.findViewById(R.id.transactionType);
-                transactionDate = itemView.findViewById(R.id.transactionDate);
-                transactionAmount = itemView.findViewById(R.id.transactionAmount);
-                transactionDescription = itemView.findViewById(R.id.transactionDescription);
-            }
-
-            public void bind(DocumentSnapshot transaction) {
-                Map<String, Object> data = transaction.getData();
-                if (data != null) {
-                    transactionType.setText(data.get("type").toString());
-                    transactionDate.setText(data.get("date").toString());
-                    transactionAmount.setText(data.get("amount").toString());
-                    transactionDescription.setText(data.get("description").toString());
-                }
-            }
-        }
     }
 }

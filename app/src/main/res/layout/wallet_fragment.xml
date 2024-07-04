@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:layout_height="match_parent" >
 
     <!-- Wallet Balance -->
@@ -25,15 +26,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0.00"
+            android:layout_marginLeft="2dp"
             android:layout_toRightOf="@id/moneySign"
             android:textSize="24sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black" />
+        <ImageButton
+            android:id="@+id/showBalanceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_remove_red_eye_24"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@id/balanceText"
+            android:layout_marginRight="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
         <TextView
             android:id="@+id/balanceText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/balanceAmount"
+            android:layout_below="@id/moneySign"
             android:fontFamily="@font/cerebri_sans"
             android:text="Wallet balance"
             android:textSize="10sp"
@@ -54,10 +65,10 @@
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:layout_below="@id/balanceText"
-                android:backgroundTint="@color/lightgreen"
+                android:backgroundTint="@color/lightgray"
                 android:text="Cash in"
                 android:textSize="12sp"
-                android:textColor="@color/moneygreen"
+                android:textColor="@color/black"
                 android:fontFamily="@font/cerebri_sans" />
             <Button
                 android:id="@+id/sendButton"
@@ -65,10 +76,10 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/cashInButton"
                 android:layout_weight="1"
-                android:backgroundTint="@color/lightgreen"
+                android:backgroundTint="@color/lightgray"
                 android:text="Send"
                 android:textSize="12sp"
-                android:textColor="@color/moneygreen"
+                android:textColor="@color/black"
                 android:fontFamily="@font/cerebri_sans" />
         </LinearLayout>
     </RelativeLayout>
@@ -316,7 +327,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/quick_actions"
         android:background="@drawable/gray_border"
-        android:layout_margin="12dp"
+        android:layout_marginHorizontal="16dp"
         android:padding="16dp">
 
         <TextView
@@ -334,17 +345,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:text="See all"
-            android:textColor="@color/moneygreen"
+            android:textColor="@color/gray"
             android:fontFamily="@font/cerebri_sans_semibold"
             android:textSize="12sp"
             android:layout_alignParentEnd="true"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transactionRecyclerView"
-            android:layout_width="356dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/transactionsTitle"
-            android:layout_marginTop="12dp" />
+            android:layout_below="@id/transactionsTitle" />
 
     </RelativeLayout>
 </RelativeLayout>
