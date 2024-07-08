@@ -9,10 +9,11 @@
     tools:context=".SavingsFragment">
 
     <RelativeLayout
-        android:id="@+id/wallet_balance"
+        android:id="@+id/savingslayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingVertical="24dp"
+        android:paddingHorizontal="16dp"
         android:layout_margin="16dp"
         android:background="@drawable/gray_border">
 
@@ -21,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="₱"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black" />
         <TextView
@@ -31,7 +32,7 @@
             android:text="0.00"
             android:layout_marginLeft="2dp"
             android:layout_toRightOf="@id/moneySign"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black" />
         <ImageButton
@@ -49,23 +50,25 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/moneySign"
             android:fontFamily="@font/cerebri_sans"
+            android:layout_marginTop="12dp"
             android:text="Total savings"
-            android:textSize="10sp"
+            android:textSize="14sp"
             android:textColor="@color/gray" />
-
-            <Button
-                android:id="@+id/startSavingButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/savingsText"
-                android:drawableLeft="@drawable/baseline_green_savings_24"
-                android:drawableRight="@drawable/baseline_green_arrow_right_24"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="Start saving now"
-                android:paddingHorizontal="0dp"
-                android:fontFamily="@font/cerebri_sans"
-                android:textColor="@color/black"
-                android:gravity="center_vertical"/>
-
     </RelativeLayout>
+    <Button
+        android:id="@+id/startSavingButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/savingslayout"
+        android:drawableLeft="@drawable/baseline_green_savings_24"
+        android:drawableRight="@drawable/baseline_green_arrow_right_24"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:text="Start saving now"
+        android:textSize="16sp"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="12dp"
+        android:layout_marginHorizontal="16dp"
+        android:fontFamily="@font/cerebri_sans"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"/>
 </RelativeLayout>

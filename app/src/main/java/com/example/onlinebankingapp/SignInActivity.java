@@ -222,7 +222,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void updateLoginButtonState() {
-        loginButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.moneygreen));
+        loginButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.darkpink));
         loginButton.setEnabled(isPhoneNumberValid && isPasswordValid);
     }
 

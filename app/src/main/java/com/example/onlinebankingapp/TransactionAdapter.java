@@ -97,7 +97,6 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                         Utility.showToast(context, "Failed to retrieve transaction details: " + e.getMessage());
                     });
         } else {
-            // For "Cash in" transactions, directly start the ReceiptActivity
             context.startActivity(intent);
         }
     }

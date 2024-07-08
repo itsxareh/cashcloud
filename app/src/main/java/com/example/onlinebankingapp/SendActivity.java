@@ -83,7 +83,7 @@ public class SendActivity extends AppCompatActivity {
                 boolean isNotEmpty = !amountText.isEmpty();
                 sendButton.setEnabled(isNotEmpty);
                 if (isNotEmpty) {
-                    sendButton.setBackgroundTintList(ContextCompat.getColorStateList(SendActivity.this, R.color.moneygreen));
+                    sendButton.setBackgroundTintList(ContextCompat.getColorStateList(SendActivity.this, R.color.darkpink));
                 } else {
                     sendButton.setBackgroundResource(0);
                 }

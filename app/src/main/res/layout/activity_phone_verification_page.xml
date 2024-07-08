@@ -35,7 +35,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
                 android:textSize="40dp"
-                android:textColor="@color/moneygreen"
+                android:textColor="@color/darkpink"
                 android:fontFamily="@font/cerebri_sans_bold"
                 android:text="PIN" />
 
@@ -93,7 +93,7 @@
         android:layout_above="@id/resendButton"
         android:fontFamily="@font/cerebri_sans"
         android:text="Verify"
-        android:backgroundTint="@color/moneygreen"
+        android:backgroundTint="@color/darkpink"
         android:textSize="12sp" />
 
     <!-- Progress bar -->

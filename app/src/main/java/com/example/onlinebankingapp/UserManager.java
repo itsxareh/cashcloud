@@ -78,6 +78,23 @@ public class UserManager {
                     }
                 });
     }
+    public void getCardData(String cardId, final CardDataCallback callback) {
+        db.collection("cards").document(cardId).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            callback.onCardLoaded(document);
+                        } else {
+                            Log.d(TAG, "No such document");
+                            callback.onFailure(new Exception("No such document"));
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                        callback.onFailure(task.getException());
+                    }
+                });
+    }
 
     public void getTransaction(String transactionId, TransactionCallback callback) {
         db.collection("transactions").document(transactionId).get()
@@ -102,7 +119,10 @@ public class UserManager {
                     callback.onFailure(e);
                 });
     }
-
+    public interface TransactionCallback {
+        void onTransactionLoaded(AppTransaction transaction);
+        void onFailure(Exception e);
+    }
 
     public interface UserDataCallback {
         void onDataLoaded(Map<String, Object> userData);
@@ -113,9 +133,9 @@ public class UserManager {
         void onAccountLoaded(DocumentSnapshot accountData);
         void onFailure(Exception e);
     }
-
-    public interface TransactionCallback {
-        void onTransactionLoaded(AppTransaction transaction);
+    public interface CardDataCallback {
+        void onCardLoaded(DocumentSnapshot cardData);
         void onFailure(Exception e);
     }
+
 }

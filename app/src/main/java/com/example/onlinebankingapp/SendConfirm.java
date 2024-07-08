@@ -142,7 +142,7 @@ public class SendConfirm extends AppCompatActivity {
                 String currentUserTransactionId = db.collection("transactions").document().getId();
                 Map<String, Object> currentUserTransaction = new HashMap<>();
                 currentUserTransaction.put("amount", -amount);
-                currentUserTransaction.put("date", currentTimeMillis);
+                currentUserTransaction.put("dateTime", currentTimeMillis);
                 currentUserTransaction.put("type", "Send money");
                 currentUserTransaction.put("description", "to " + recipientSnapshot.getString("phoneNumber"));
                 currentUserTransaction.put("userId", currentUserId);
@@ -156,7 +156,7 @@ public class SendConfirm extends AppCompatActivity {
                 String recipientTransactionId = db.collection("transactions").document().getId();
                 Map<String, Object> recipientTransaction = new HashMap<>();
                 recipientTransaction.put("amount", amount);
-                recipientTransaction.put("date", currentTimeMillis);
+                recipientTransaction.put("dateTime", currentTimeMillis);
                 recipientTransaction.put("type", "Received money");
                 recipientTransaction.put("description", "from " + currentUserSnapshot.getString("phoneNumber"));
                 recipientTransaction.put("userId", recipientUserId);

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:text="login details"
             android:fontFamily="@font/cerebri_sans"
-            android:textColor="@color/moneygreen"
+            android:textColor="@color/darkpink"
             android:layout_marginBottom="12dp"
             android:textSize="40sp"/>
 

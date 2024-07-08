@@ -33,8 +33,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class PagePhoneVerification extends Fragment {
@@ -130,7 +133,8 @@ public class PagePhoneVerification extends Fragment {
                 .addOnCompleteListener(task -> {
                     setInProgress(false);
                     if (task.isSuccessful()) {
-                        linkPhoneNumberToEmailAccount(credential);
+                        String userUID = task.getResult().getUser().getUid();
+                        linkPhoneNumberToEmailAccount(credential, userUID);
                     } else {
                         String message = "Something went wrong, please try again later.";
                         if (task.getException() != null) {
@@ -141,11 +145,10 @@ public class PagePhoneVerification extends Fragment {
                 });
     }
 
-    private void linkPhoneNumberToEmailAccount(PhoneAuthCredential credential) {
+    private void linkPhoneNumberToEmailAccount(PhoneAuthCredential credential, String userUID) {
         mAuth.getCurrentUser().linkWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        String userUID = task.getResult().getUser().getUid();
                         checkAndSaveUserData(userUID);
                     } else {
                         String errorMessage = "Failed to link phone number.";
@@ -178,7 +181,6 @@ public class PagePhoneVerification extends Fragment {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        String newUserUID = task.getResult().getUser().getUid();
                         Map<String, Object> user = new HashMap<>();
                         user.put("fullName", fullName);
                         user.put("email", email);
@@ -190,10 +192,10 @@ public class PagePhoneVerification extends Fragment {
                         user.put("accounts", new HashMap<String, Boolean>());
 
                         db.collection("users")
-                                .document(newUserUID)
+                                .document(userUID)
                                 .set(user)
                                 .addOnSuccessListener(aVoid -> {
-                                    createDefaultAccounts(newUserUID);
+                                    createDefaultAccounts(userUID);
                                 })
                                 .addOnFailureListener(e -> {
                                     Utility.showToast(getActivity(), "Failed to save user information: " + e.getMessage());
@@ -242,13 +244,72 @@ public class PagePhoneVerification extends Fragment {
 
         userRef.update(accountsUpdate)
                 .addOnSuccessListener(aVoid -> {
-                    navigateToMainActivity(userUID);
+                    createOnlineCard(userUID);
                 })
                 .addOnFailureListener(e -> {
                     Utility.showToast(getActivity(), "Failed to update user account references: " + e.getMessage());
                 });
     }
+    private void createOnlineCard(String userUID){
+        CollectionReference cardCollection = db.collection("cards");
 
+        Map<String, Object> cardAccount = new HashMap<>();
+        cardAccount.put("userId", userUID);
+        cardAccount.put("cardType", "online card");
+        cardAccount.put("cardNumber", generateRandomCardNumber());
+        cardAccount.put("expirationDate", generateExpirationDate());
+        cardAccount.put("cvv", generateRandomCVV());
+        cardAccount.put("limit", 50000);
+        cardAccount.put("balance", 0.00);
+
+        Task<DocumentReference> cardTask = cardCollection.add(cardAccount);
+        Tasks.whenAll(cardTask)
+                .addOnSuccessListener(result -> {
+                    String cardAccountId = cardTask.getResult().getId();
+                    updateUserCardReferences(userUID, cardAccountId);
+                })
+                .addOnFailureListener(e -> {
+                    Utility.showToast(getActivity(), "Failed to create card: " + e.getMessage());
+                });
+    }
+    private String generateExpirationDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, 2);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yy");
+        return dateFormat.format(calendar.getTime());
+    }
+    private String generateRandomCardNumber() {
+        Random random = new Random();
+        StringBuilder cardNumber = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            int digit = random.nextInt(10);
+            cardNumber.append(digit);
+        }
+        return cardNumber.toString();
+    }
+    private String generateRandomCVV() {
+        Random random = new Random();
+        StringBuilder cvv = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            int digit = random.nextInt(10);
+            cvv.append(digit);
+        }
+        return cvv.toString();
+    }
+    private void updateUserCardReferences(String userUID, String cardAccountId) {
+        DocumentReference userRef = db.collection("users").document(userUID);
+
+        Map<String, Object> accountsUpdate = new HashMap<>();
+        accountsUpdate.put("cards." + cardAccountId, true);
+
+        userRef.update(accountsUpdate)
+                .addOnSuccessListener(aVoid -> {
+                    navigateToMainActivity(userUID);
+                })
+                .addOnFailureListener(e -> {
+                    Utility.showToast(getActivity(), "Failed to update user card references: " + e.getMessage());
+                });
+    }
     private void navigateToMainActivity(String userUID) {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

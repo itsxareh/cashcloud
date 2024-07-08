@@ -121,7 +121,7 @@ public class Page2SignUp extends Fragment {
     }
 
     private void updateContinueButtonState() {
-        continueButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.moneygreen));
+        continueButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.darkpink));
         continueButton.setEnabled(isPhoneNumberValid && isPasswordValid);
     }
 

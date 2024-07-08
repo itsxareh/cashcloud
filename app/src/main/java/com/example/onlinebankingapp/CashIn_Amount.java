@@ -109,8 +109,6 @@ public class CashIn_Amount extends AppCompatActivity {
         amount1000.setOnClickListener(v -> setAmounts("1000.00"));
         amount2000.setOnClickListener(v -> setAmounts("2000.00"));
 
-
-
         payNowButton.setOnClickListener(v -> {
             Log.d(TAG, "onClick: Pay Now button clicked.");
             String amountText = amount.getText().toString();
@@ -186,7 +184,7 @@ public class CashIn_Amount extends AppCompatActivity {
                 boolean isNotEmpty = !amountText.isEmpty();
                 payNowButton.setEnabled(isNotEmpty);
                 if (isNotEmpty) {
-                    payNowButton.setBackgroundTintList(ContextCompat.getColorStateList(CashIn_Amount.this, R.color.moneygreen));
+                    payNowButton.setBackgroundTintList(ContextCompat.getColorStateList(CashIn_Amount.this, R.color.darkpink));
                 } else {
                     payNowButton.setBackgroundResource(0);
                 }
@@ -259,6 +257,7 @@ public class CashIn_Amount extends AppCompatActivity {
     private void startGCashPayment() {
         double amountValue = Double.parseDouble(amount.getText().toString());
         createPayMongoCheckoutSession(amountValue, "gcash");
+        updateUserBalance(amount.getText().toString());
     }
     private void startMayaPayment() {
         double amountValue = Double.parseDouble(amount.getText().toString());
@@ -333,14 +332,16 @@ public class CashIn_Amount extends AppCompatActivity {
         request.data.attributes.referenceNumber = referenceNumber;
 
         request.data.attributes.redirect = new PayMongoRequest.Redirect();
-        request.data.attributes.redirect.success_url = "https://example.com/success";
-        request.data.attributes.redirect.failed_url = "https://example.com/failed";
+        request.data.attributes.redirect.success_url = "http://192.168.100.10:5000/payment/success.html";
+        request.data.attributes.redirect.failed_url = "http://192.168.100.10:5000/payment/failed.html";
+
 
         service.createCheckoutSession(request).enqueue(new Callback<PayMongoResponse>() {
             @Override
             public void onResponse(Call<PayMongoResponse> call, Response<PayMongoResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String checkoutUrl = response.body().data.attributes.checkoutUrl;
+                    Log.d(TAG, "Checkout URL: " + checkoutUrl);
                     runOnUiThread(() -> {
                         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl));
                         startActivity(browserIntent);

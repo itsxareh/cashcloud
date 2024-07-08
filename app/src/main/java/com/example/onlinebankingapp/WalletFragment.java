@@ -46,8 +46,6 @@ public class WalletFragment extends Fragment {
         showBalanceButton = rootView.findViewById(R.id.showBalanceButton);
         cashInButton = rootView.findViewById(R.id.cashInButton);
         sendButton = rootView.findViewById(R.id.sendButton);
-
-        bankServiceButton = rootView.findViewById(R.id.bankServiceButton);
         cardsServiceButton = rootView.findViewById(R.id.cardsServiceButton);
         savingsServiceButton = rootView.findViewById(R.id.savingsServiceButton);
         loadServiceButton = rootView.findViewById(R.id.loadServiceButton);
@@ -64,6 +62,7 @@ public class WalletFragment extends Fragment {
 
         cashInButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), CashInActivity.class)));
         sendButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), SendActivity.class)));
+
         seeAllButton.setOnClickListener(v -> startActivity(new Intent(getActivity(), TransactionsActivity.class)));
         userManager = UserManager.getInstance();
 

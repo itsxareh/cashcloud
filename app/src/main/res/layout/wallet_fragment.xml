@@ -9,7 +9,8 @@
         android:id="@+id/wallet_balance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingVertical="24dp"
+        android:paddingHorizontal="16dp"
         android:layout_margin="16dp"
         android:background="@drawable/gray_border">
 
@@ -18,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="₱"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black" />
         <TextView
@@ -28,7 +29,7 @@
             android:text="0.00"
             android:layout_marginLeft="2dp"
             android:layout_toRightOf="@id/moneySign"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@color/black" />
         <ImageButton
@@ -47,7 +48,8 @@
             android:layout_below="@id/moneySign"
             android:fontFamily="@font/cerebri_sans"
             android:text="Wallet balance"
-            android:textSize="10sp"
+            android:layout_marginTop="12dp"
+            android:textSize="14sp"
             android:textColor="@color/gray" />
 
         <LinearLayout
@@ -65,7 +67,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:layout_below="@id/balanceText"
-                android:backgroundTint="@color/lightgray"
+                android:backgroundTint="@color/pink"
                 android:text="Cash in"
                 android:textSize="12sp"
                 android:textColor="@color/black"
@@ -76,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/cashInButton"
                 android:layout_weight="1"
-                android:backgroundTint="@color/lightgray"
+                android:backgroundTint="@color/pink"
                 android:text="Send"
                 android:textSize="12sp"
                 android:textColor="@color/black"
@@ -94,33 +96,6 @@
         android:columnCount="4"
         android:rowCount="2"
         android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_rowWeight="1"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_horizontal">
-
-            <ImageButton
-                android:id="@+id/bankServiceButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/gray_border"
-                android:src="@drawable/baseline_bank_24"
-                android:layout_marginBottom="6dp" />
-
-            <TextView
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="Bank transfer"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:fontFamily="@font/cerebri_sans_semibold"
-                android:gravity="center" />
-        </LinearLayout>
 
         <!-- Cards -->
         <LinearLayout
@@ -345,7 +320,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:text="See all"
-            android:textColor="@color/gray"
+            android:textColor="@color/darkpink"
             android:fontFamily="@font/cerebri_sans_semibold"
             android:textSize="12sp"
             android:layout_alignParentEnd="true"/>

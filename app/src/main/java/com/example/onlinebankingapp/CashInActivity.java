@@ -28,7 +28,7 @@ import java.util.Map;
 public class CashInActivity extends AppCompatActivity {
     UserManager userManager;
 
-    Button cashCloudSavings, cashCloudCenter, bankAccount, debitCreditCard;
+    Button cashCloudSavings, cashCloudCenter, debitCreditCard;
     ImageButton dobButton, bdoButton, grabPayButton, billEaseButton, landBankButton, dobubpButton, metroBankButton, paypalButton, gCashButton, mayaButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,6 @@ public class CashInActivity extends AppCompatActivity {
 
         cashCloudSavings = findViewById(R.id.cashCloudSavings);
         cashCloudCenter = findViewById(R.id.cashCloudCenter);
-        bankAccount = findViewById(R.id.bankAccount);
         debitCreditCard = findViewById(R.id.debitCreditCard);
 
         bdoButton = findViewById(R.id.bdoButton);

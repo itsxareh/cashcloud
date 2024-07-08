@@ -14,6 +14,10 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +32,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://127.0.0.1:5500/");
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    try {
+                        InputStream in = urlConnection.getInputStream();
+                    } finally {
+                        urlConnection.disconnect();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
         userManager = UserManager.getInstance();
 
@@ -87,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     public ViewPager2 getViewPager() {
         return viewPager;
     }
+
     private void loadUserData() {
         userManager.getUserData(new UserManager.UserDataCallback() {
             @Override

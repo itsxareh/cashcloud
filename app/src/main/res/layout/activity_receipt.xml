@@ -155,7 +155,7 @@
         android:layout_marginHorizontal="24dp"
         android:fontFamily="@font/cerebri_sans"
         android:text="Okay"
-        android:backgroundTint="@color/moneygreen"
+        android:backgroundTint="@color/darkpink"
         android:layout_marginBottom="24dp"
         android:textSize="12sp" />
 </RelativeLayout>

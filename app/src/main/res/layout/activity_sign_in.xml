@@ -23,7 +23,7 @@
             android:layout_gravity="center_horizontal"
             android:text="CashCloud"
             android:layout_marginVertical="40dp"
-            android:textColor="@color/mintgreen"
+            android:textColor="@color/darkpink"
             android:fontFamily="@font/cerebri_sans_bold"
             android:textSize="37sp"/>
 
@@ -85,7 +85,7 @@
         android:textSize="10sp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/cerebri_sans"
-        android:textColor="@color/moneygreen"
+        android:textColor="@color/darkpink"
         android:id="@+id/forgotPassword"
         android:text="Forgot your password?" />
     </LinearLayout>

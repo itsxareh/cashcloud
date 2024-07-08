@@ -115,7 +115,7 @@ public class Page1SignUp extends Fragment {
         }
 
         boolean enableButton = isFirstNameValid && isLastNameValid && isEmailValid;
-        continueButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.moneygreen));
+        continueButton.setBackgroundTintList(ContextCompat.getColorStateList(getActivity(), R.color.darkpink));
         continueButton.setEnabled(enableButton);
     }
 
