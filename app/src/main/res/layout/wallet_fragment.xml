@@ -303,13 +303,14 @@
         android:layout_below="@id/quick_actions"
         android:background="@drawable/gray_border"
         android:layout_marginHorizontal="16dp"
-        android:padding="16dp">
+        android:paddingVertical="16dp">
 
         <TextView
             android:id="@+id/transactionsTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Transactions"
+            android:paddingLeft="16dp"
             android:textSize="14sp"
             android:fontFamily="@font/cerebri_sans_semibold"
             android:textColor="@color/black" />
@@ -318,8 +319,8 @@
             android:id="@+id/seeAllButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
             android:text="See all"
+            android:paddingRight="16dp"
             android:textColor="@color/darkpink"
             android:fontFamily="@font/cerebri_sans_semibold"
             android:textSize="12sp"

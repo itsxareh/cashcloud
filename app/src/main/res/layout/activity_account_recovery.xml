@@ -54,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="UNVERIFIED"
-            android:textSize="10sp"
+            android:textSize="12sp"
             android:fontFamily="@font/cerebri_sans"
             android:textColor="@android:color/holo_red_light" />
     </LinearLayout>
@@ -64,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/emailLayout"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:text="Send email verification"
         android:textSize="12sp"
         android:fontFamily="@font/cerebri_sans"

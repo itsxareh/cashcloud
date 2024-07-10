@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/cerebri_sans"
+        android:paddingLeft="12dp"
         android:textColor="@color/gray"
         android:text="Type"
         android:textSize="12sp" />
@@ -21,6 +22,7 @@
         android:fontFamily="@font/cerebri_sans"
         android:textColor="@color/gray"
         android:text="Date"
+        android:paddingRight="12dp"
         android:textSize="12sp" />
 
     <TextView
@@ -29,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/transactionType"
         android:text="Description"
+        android:paddingLeft="12dp"
         android:fontFamily="@font/cerebri_sans"
         android:textSize="14sp"
         android:layout_marginTop="4dp" />
@@ -49,6 +52,7 @@
         android:fontFamily="@font/cerebri_sans"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/transactionDate"
+        android:paddingRight="12dp"
         android:text="Amount"
         android:textSize="14sp"
         android:layout_marginTop="4dp" />

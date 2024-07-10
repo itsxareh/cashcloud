@@ -69,13 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     tab.setText("Savings");
                     break;
+//                case 2:
+//                    tab.setText("Credit");
+//                    break;
+//                case 3:
+//                    tab.setText("Loans");
+//                    break;
                 case 2:
-                    tab.setText("Credit");
-                    break;
-                case 3:
-                    tab.setText("Loans");
-                    break;
-                case 4:
                     tab.setText("Cards");
                     break;
             }

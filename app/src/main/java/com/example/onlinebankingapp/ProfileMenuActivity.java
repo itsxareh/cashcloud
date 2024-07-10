@@ -40,7 +40,6 @@ public class ProfileMenuActivity extends AppCompatActivity {
         profilePhoneNumber = findViewById(R.id.profilePhoneNumber);
 
         quickGuideMenu = findViewById(R.id.quickGuideMenu);
-        favoritesMenu = findViewById(R.id.favoritesMenu);
         settingsMenu = findViewById(R.id.settingsMenu);
         logOutButton = findViewById(R.id.logOutButton);
 

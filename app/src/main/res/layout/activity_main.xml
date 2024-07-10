@@ -42,6 +42,7 @@
         android:layout_marginHorizontal="16dp"
         android:background="@null"
         app:tabMode="scrollable"
+        app:tabGravity="center"
         app:tabTextAppearance="@style/CustomTabText"
         android:layout_below="@id/header" />
 

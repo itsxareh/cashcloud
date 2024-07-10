@@ -17,11 +17,11 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new WalletFragment();
             case 1:
                 return new SavingsFragment();
+//            case 2:
+//                return new CreditFragment();
+////            case 3:
+////                return new LoansFragment();
             case 2:
-                return new CreditFragment();
-            case 3:
-                return new LoansFragment();
-            case 4:
                 return new CardsFragment();
             default:
                 return new WalletFragment();
@@ -29,6 +29,6 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     }
     @Override
     public int getItemCount() {
-        return 5;
+        return 3;
     }
 }

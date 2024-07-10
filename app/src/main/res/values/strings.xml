@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OnlineBankingApp</string>
+    <string name="app_name">CashCloud</string>
     <string-array name="country_codes">
         <item>+63</item>
         <item>+44</item>

@@ -55,6 +55,67 @@
             android:textSize="14sp"
             android:textColor="@color/gray" />
     </RelativeLayout>
+    <TextView
+        android:id="@+id/myaccountText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My account"
+        android:textColor="@color/gray"
+        android:textSize="12dp"
+        android:fontFamily="@font/cerebri_sans"
+        android:textAllCaps="true"
+        android:layout_below="@id/savingslayout"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <RelativeLayout
+        android:id="@+id/mySavingLayout"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_below="@id/myaccountText"
+        android:layout_marginHorizontal="16dp"
+        android:padding="20dp"
+        android:background="@drawable/pink_border">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Savings"
+            android:textSize="18sp"
+            android:textColor="@color/pink"
+            android:fontFamily="@font/cerebri_sans_semibold" />
+        <TextView
+            android:id="@+id/accountNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="•••• •••• 0123"
+            android:textColor="@color/pink"
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/cerebri_sans"
+            android:textSize="16sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₱"
+            android:layout_toLeftOf="@id/savingsBalance"
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/cerebri_sans"
+            android:textColor="@color/pink"
+            android:textSize="22sp" />
+        <TextView
+            android:id="@+id/savingsBalance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="1dp"
+            android:text="0.00"
+            android:textColor="@color/pink"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:fontFamily="@font/cerebri_sans"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+
     <Button
         android:id="@+id/startSavingButton"
         android:layout_width="match_parent"
@@ -64,6 +125,7 @@
         android:drawableRight="@drawable/baseline_green_arrow_right_24"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:text="Start saving now"
+        android:visibility="gone"
         android:textSize="16sp"
         android:paddingVertical="16dp"
         android:paddingHorizontal="12dp"
@@ -71,4 +133,13 @@
         android:fontFamily="@font/cerebri_sans"
         android:textColor="@color/black"
         android:gravity="center_vertical"/>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/startSavingButton" />
 </RelativeLayout>

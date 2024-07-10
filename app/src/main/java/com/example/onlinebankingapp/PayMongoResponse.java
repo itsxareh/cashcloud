@@ -14,6 +14,8 @@ public class PayMongoResponse {
     public static class Attributes {
         @SerializedName("checkout_url")
         public String checkoutUrl;
+        @SerializedName("success_url")
+        public String success_url;
 
     }
 }

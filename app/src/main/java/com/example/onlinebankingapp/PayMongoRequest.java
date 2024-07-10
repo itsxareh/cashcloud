@@ -19,8 +19,8 @@ public class PayMongoRequest {
         public List<String> paymentMethodTypes;
         @SerializedName("reference_number")
         public String referenceNumber;
-
-        public Redirect redirect;
+        @SerializedName("success_url")
+        public String success_url;
 
     }
 
@@ -36,10 +36,6 @@ public class PayMongoRequest {
         public String name;
         @SerializedName("quantity")
         public int quantity;
-    }
-    public static class Redirect {
-        public String success_url;
-        public String failed_url;
     }
 }
 

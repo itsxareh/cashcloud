@@ -78,24 +78,10 @@
             android:textColor="@color/black"
             android:gravity="center_vertical"/>
         <Button
-            android:id="@+id/favoritesMenu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/quickGuideMenu"
-            android:drawableLeft="@drawable/baseline_favorite_border_24"
-            android:drawableRight="@drawable/baseline_arrow_right_24"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="Favorites"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="12dp"
-            android:fontFamily="@font/cerebri_sans"
-            android:textColor="@color/black"
-            android:gravity="center_vertical"/>
-        <Button
             android:id="@+id/settingsMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/favoritesMenu"
+            android:layout_below="@id/quickGuideMenu"
             android:drawableLeft="@drawable/baseline_settings_24"
             android:drawableRight="@drawable/baseline_arrow_right_24"
             android:background="?attr/selectableItemBackgroundBorderless"

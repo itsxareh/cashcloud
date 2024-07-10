@@ -17,6 +17,8 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.Map;
 
@@ -106,19 +108,34 @@ public class AccountRecovery extends AppCompatActivity {
     private void changeEmailAddress() {
         String newEmail = recoveryEmail.getText().toString().trim();
         FirebaseUser user = mAuth.getCurrentUser();
+
         if (user != null && !newEmail.isEmpty() && !newEmail.equals(userEmail)) {
-            user.unlink(EmailAuthProvider.PROVIDER_ID).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    user.updateEmail(newEmail).addOnCompleteListener(emailUpdateTask -> {
-                        if (emailUpdateTask.isSuccessful()) {
-                            userEmail = newEmail;
-                            Toast.makeText(AccountRecovery.this, "Email updated successfully.", Toast.LENGTH_SHORT).show();
+            // Assume the phone number and verification code are obtained through the UI or another method
+            String phoneNumber = "+639212870742";
+            String verificationCode = "111111"; // Replace with the actual verification code
+
+            // Create PhoneAuthCredential with the verification code
+            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, phoneNumber);
+
+            // Re-authenticate the user
+            user.reauthenticate(credential).addOnCompleteListener(reauthTask -> {
+                if (reauthTask.isSuccessful()) {
+                    // If re-authentication is successful, proceed with email update
+                    user.verifyBeforeUpdateEmail(newEmail).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(AccountRecovery.this, "Verification email sent to the new email address. Please verify to complete the update.", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(AccountRecovery.this, "Failed to update email.", Toast.LENGTH_SHORT).show();
+                            // Log the error message for debugging
+                            Log.e("changeEmailAddress", "Failed to send verification email", task.getException());
+                            String errorMessage = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                            Toast.makeText(AccountRecovery.this, "Failed to send verification email: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
-                    Toast.makeText(AccountRecovery.this, "Failed to unlink email.", Toast.LENGTH_SHORT).show();
+                    // Handle re-authentication failure
+                    Log.e("changeEmailAddress", "Re-authentication failed", reauthTask.getException());
+                    String errorMessage = reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Unknown error";
+                    Toast.makeText(AccountRecovery.this, "Re-authentication failed: " + errorMessage, Toast.LENGTH_SHORT).show();
                 }
             });
         } else {

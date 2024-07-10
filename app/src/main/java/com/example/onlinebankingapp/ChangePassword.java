@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class ChangePassword extends AppCompatActivity {
-    TextInputEditText currentPassword, newPassword, confirmNewPassword;
+    EditText currentPassword, newPassword, confirmNewPassword;
     Button saveButton;
 
     FirebaseAuth mAuth;

@@ -8,6 +8,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -59,32 +62,39 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CashIn_Amount extends AppCompatActivity {
     private static final String TAG = "CashIn_Amount";
+
     private static final String PAYPAL_CLIENT_ID = "AdTjENItd5WmMbxFepwjArvMiY8R6VnnQQP1mR0-cRsissIVE3fEUi7YJkQYeyGrHnczZ8M9-4uEk0NP";
     private static final int PAYPAL_REQUEST_CODE = 123;
     private static PayPalConfiguration config = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .clientId(PAYPAL_CLIENT_ID);
 
-    private String referenceNumber;
+    private WebView webView;
+    private String referenceNumber = "";
     UserManager userManager;
     EditText amount;
     TextView currentBalanceText, paymentMethod, cashInAmount, cashInChargeAmount, balanceAmount;
     Button amount100, amount500, amount1000, amount2000, payNowButton;
-    private PayMongoService payMongoService;
+
     private String currentBalance = "";
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate: Initializing CashIn_Amount activity.");
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.cash_in_amount);
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         userManager = UserManager.getInstance();
         loadUserData();
 
@@ -109,6 +119,20 @@ public class CashIn_Amount extends AppCompatActivity {
         amount1000.setOnClickListener(v -> setAmounts("1000.00"));
         amount2000.setOnClickListener(v -> setAmounts("2000.00"));
 
+        webView = findViewById(R.id.webview);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.contains("/success.html")) {
+                    Log.d(TAG, "Payment success.");
+                    updateUserBalance(getReferenceNumber());
+                    return true;
+                }
+                return false;
+            }
+        });
+        webView.getSettings().setJavaScriptEnabled(true);
+
         payNowButton.setOnClickListener(v -> {
             Log.d(TAG, "onClick: Pay Now button clicked.");
             String amountText = amount.getText().toString();
@@ -118,37 +142,34 @@ public class CashIn_Amount extends AppCompatActivity {
                 if (amountValue >= 1) {
                     switch (pMethod) {
                         case "Debit/Credit Card":
-                            startCardPayment();
-                            break;
-                        case "Paypal":
-                            startPayPalPayment();
+                            createPayMongoCheckoutSession(amountValue, "card");
                             break;
                         case "GCash":
-                            startGCashPayment();
+                            createPayMongoCheckoutSession(amountValue, "gcash");
                             break;
                         case "Maya":
-                            startMayaPayment();
+                            createPayMongoCheckoutSession(amountValue, "paymaya");
                             break;
                         case "DOB":
-                            startDOBPayment();
+                            createPayMongoCheckoutSession(amountValue, "dob");
                             break;
                         case "BDO":
-                            startBDOPayment();
+                            createPayMongoCheckoutSession(amountValue, "grab_pay");
                             break;
                         case "LandBank":
-                            startLandBankPayment();
+                            createPayMongoCheckoutSession(amountValue, "brankas_landbank");
                             break;
                         case "GrabPay":
-                            startGrabPayPayment();
+                            createPayMongoCheckoutSession(amountValue, "grab_pay");
                             break;
                         case "BillEase":
-                            startBillEasePayment();
+                            createPayMongoCheckoutSession(amountValue, "billease");
                             break;
                         case "DOBUBP":
-                            startDOBUBPPayment();
+                            createPayMongoCheckoutSession(amountValue, "dob_ubp");
                             break;
                         case "MetroBank":
-                            startMetroBankPayment();
+                            createPayMongoCheckoutSession(amountValue, "brankas_metrobank");
                             break;
                         default:
                             Log.w(TAG, "Unknown payment method: " + pMethod);
@@ -191,6 +212,7 @@ public class CashIn_Amount extends AppCompatActivity {
             }
         });
     }
+
     private void loadUserData() {
         userManager.getUserData(new UserManager.UserDataCallback() {
             @Override
@@ -231,6 +253,7 @@ public class CashIn_Amount extends AppCompatActivity {
             }
         });
     }
+
     private void setAmounts(String value) {
         Log.d(TAG, "setAmounts: Setting amount to " + value);
         amount.setText(value);
@@ -238,63 +261,21 @@ public class CashIn_Amount extends AppCompatActivity {
         cashInChargeAmount.setText(value);
     }
 
-    private void startPayPalPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(amountValue), "PHP",
-                "Cash In", PayPalPayment.PAYMENT_INTENT_SALE);
-
-        Intent intent = new Intent(this, PaymentActivity.class);
-        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
-        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
-
-        Log.d(TAG, "startPayPalPayment: Starting PayPal Payment with: " + payment.toJSONObject().toString());
-        startActivityForResult(intent, PAYPAL_REQUEST_CODE);
-    }
-    private void startCardPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "card");
-    }
-    private void startGCashPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "gcash");
-        updateUserBalance(amount.getText().toString());
-    }
-    private void startMayaPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "paymaya");
-    }
-    private void startGrabPayPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "grab_pay");
-    }
-    private void startMetroBankPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "brankas_metrobank");
-    }
-    private void startLandBankPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "brankas_landbank");
-    }
-    private void startBDOPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "brankas_bdo");
-    }
-    private void startBillEasePayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "billease");
-    }
-    private void startDOBPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "dob");
-    }
-    private void startDOBUBPPayment() {
-        double amountValue = Double.parseDouble(amount.getText().toString());
-        createPayMongoCheckoutSession(amountValue, "dob_ubp");
-    }
+//    private void startPayPalPayment(Double amountValue) {
+//        PayPalPayment payment = new PayPalPayment(new BigDecimal(amountValue), "USD",
+//                "Cash In", PayPalPayment.PAYMENT_INTENT_SALE);
+//
+//        Intent intent = new Intent(this, PaymentActivity.class);
+//        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config);
+//        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payment);
+//
+//        Log.d(TAG, "startPayPalPayment: Starting PayPal Payment with: " + payment.toJSONObject().toString());
+//        startActivityForResult(intent, PAYPAL_REQUEST_CODE);
+//    }
     private void createPayMongoCheckoutSession(double amount, String paymentMethod) {
         String baseUrl = "https://api.paymongo.com/";
         String apiKey = "sk_test_E2kCYM7eMKbGbvfGAFCxUgyJ";
-        String referenceNumber = UUID.randomUUID().toString();
+        setReferenceNumber(UUID.randomUUID().toString());
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
@@ -330,26 +311,27 @@ public class CashIn_Amount extends AppCompatActivity {
         request.data.attributes.lineItems = Collections.singletonList(lineItem);
         request.data.attributes.paymentMethodTypes = Collections.singletonList(paymentMethod);
         request.data.attributes.referenceNumber = referenceNumber;
+        request.data.attributes.success_url = "http://192.168.100.10:5500/success.html";
 
-        request.data.attributes.redirect = new PayMongoRequest.Redirect();
-        request.data.attributes.redirect.success_url = "http://192.168.100.10:5000/payment/success.html";
-        request.data.attributes.redirect.failed_url = "http://192.168.100.10:5000/payment/failed.html";
-
+        Log.d(TAG, "Creating PayMongo checkout session with request: " + new Gson().toJson(request));
 
         service.createCheckoutSession(request).enqueue(new Callback<PayMongoResponse>() {
             @Override
             public void onResponse(Call<PayMongoResponse> call, Response<PayMongoResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String checkoutUrl = response.body().data.attributes.checkoutUrl;
+                    String successUrl = response.body().data.attributes.success_url;
                     Log.d(TAG, "Checkout URL: " + checkoutUrl);
+                    Log.d(TAG, "Success URL: " + successUrl);
                     runOnUiThread(() -> {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(checkoutUrl));
-                        startActivity(browserIntent);
+                        webView.setVisibility(View.VISIBLE);
+                        webView.loadUrl(checkoutUrl);
                     });
                 } else {
                     try {
                         if (response.errorBody() != null) {
-                            Log.e(TAG, "PayMongo request not successful: " + response.message() + ", Error Body: " + response.errorBody().string());
+                            String errorResponse = response.errorBody().string();
+                            Log.e(TAG, "PayMongo request not successful: " + response.message() + ", Error Body: " + errorResponse);
                         } else {
                             Log.e(TAG, "PayMongo request not successful: " + response.message());
                         }
@@ -358,18 +340,12 @@ public class CashIn_Amount extends AppCompatActivity {
                     }
                 }
             }
+
             @Override
             public void onFailure(Call<PayMongoResponse> call, Throwable t) {
                 Log.e(TAG, "Error creating PayMongo checkout session", t);
             }
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        stopService(new Intent(this, PayPalService.class));
-        Log.d(TAG, "onDestroy: Stopping PayPal service");
-        super.onDestroy();
     }
 
     private void updateUserBalance(String referenceNumber) {
@@ -454,41 +430,35 @@ public class CashIn_Amount extends AppCompatActivity {
             }
         });
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PAYPAL_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
-                if (confirm != null) {
-                    try {
-                        String paymentDetails = confirm.toJSONObject().toString(4);
-                        Log.i(TAG, "PaymentConfirmation info received from PayPal: " + paymentDetails);
-                        updateUserBalance(referenceNumber);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "an extremely unlikely failure occurred: ", e);
-                    }
-                }
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                Log.i(TAG, "The user canceled.");
-            } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
-                Log.i(TAG, "An invalid Payment or PayPalConfiguration was submitted.");
-            }
-        }
-    }
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Uri uri = intent.getData();
-        if (uri != null) {
-            String host = uri.getHost();
-            if ("success".equals(host)) {
-                Log.i(TAG, "Payment success callback received");
-                updateUserBalance(referenceNumber);
-            } else if ("failed".equals(host)) {
-                Log.i(TAG, "Payment failed callback received");
-                Utility.showToast(CashIn_Amount.this, "Payment failed");
-            }
-        }
-    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == PAYPAL_REQUEST_CODE) {
+//            if (resultCode == Activity.RESULT_OK) {
+//                PaymentConfirmation confirm = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+//                if (confirm != null) {
+//                    try {
+//                        String paymentDetails = confirm.toJSONObject().toString(4);
+//                        Log.i(TAG, "PaymentConfirmation info received from PayPal: " + paymentDetails);
+//                        updateUserBalance(getReferenceNumber());
+//                    } catch (JSONException e) {
+//                        Log.e(TAG, "an extremely unlikely failure occurred: ", e);
+//                    }
+//                }
+//            } else if (resultCode == Activity.RESULT_CANCELED) {
+//                Log.i(TAG, "The user canceled.");
+//            } else if (resultCode == PaymentActivity.RESULT_EXTRAS_INVALID) {
+//                Log.i(TAG, "An invalid Payment or PayPalConfiguration was submitted.");
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        stopService(new Intent(this, PayPalService.class));
+//        Log.d(TAG, "onDestroy: Stopping PayPal service");
+//        super.onDestroy();
+//    }
 }
+

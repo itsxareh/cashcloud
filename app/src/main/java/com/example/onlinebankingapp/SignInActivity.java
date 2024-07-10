@@ -183,6 +183,7 @@ public class SignInActivity extends AppCompatActivity {
                         changeInProgress(false);
 
                         Bundle bundle = new Bundle();
+                        bundle.putString("reason", "Sign in");
                         bundle.putString("countryCode", countryCode);
                         bundle.putString("phoneNumber", phoneNumber);
                         bundle.putString("verificationId", verificationId);

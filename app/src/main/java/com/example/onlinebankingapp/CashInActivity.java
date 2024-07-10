@@ -44,7 +44,6 @@ public class CashInActivity extends AppCompatActivity {
 
 
         cashCloudSavings = findViewById(R.id.cashCloudSavings);
-        cashCloudCenter = findViewById(R.id.cashCloudCenter);
         debitCreditCard = findViewById(R.id.debitCreditCard);
 
         bdoButton = findViewById(R.id.bdoButton);
@@ -54,7 +53,6 @@ public class CashInActivity extends AppCompatActivity {
         billEaseButton = findViewById(R.id.billEaseButton);
         dobubpButton = findViewById(R.id.dobubpButton);
         metroBankButton = findViewById(R.id.metroBankButton);
-        paypalButton = findViewById(R.id.paypalButton);
         gCashButton = findViewById(R.id.gCashButton);
         mayaButton = findViewById(R.id.mayaButton);
 
@@ -63,11 +61,11 @@ public class CashInActivity extends AppCompatActivity {
             intent.putExtra("paymentMethod", "Debit/Credit Card");
             startActivity(intent);
         });
-        paypalButton.setOnClickListener(v -> {
-            Intent intent = new Intent(CashInActivity.this, CashIn_Amount.class);
-            intent.putExtra("paymentMethod", "Paypal");
-            startActivity(intent);
-        });
+//        paypalButton.setOnClickListener(v -> {
+//            Intent intent = new Intent(CashInActivity.this, CashIn_Amount.class);
+//            intent.putExtra("paymentMethod", "Paypal");
+//            startActivity(intent);
+//        });
         gCashButton.setOnClickListener(v -> {
             Intent intent = new Intent(CashInActivity.this, CashIn_Amount.class);
             intent.putExtra("paymentMethod", "GCash");

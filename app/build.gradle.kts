@@ -46,6 +46,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.2")
+    implementation ("com.orhanobut:dialogplus:1.11@aar")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

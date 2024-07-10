@@ -193,6 +193,7 @@ public class Page3SignUp extends Fragment {
 
     private void navigateToVerificationPage(String verificationId) {
         Bundle bundle = new Bundle();
+        bundle.putString("reason", "Sign up");
         bundle.putString("verificationId", verificationId);
         bundle.putString("fullName", firstName + " " + lastName);
         bundle.putString("email", email);

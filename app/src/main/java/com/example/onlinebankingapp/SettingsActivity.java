@@ -38,7 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
         recoverSetting.setOnClickListener(v -> { startActivity(new Intent(SettingsActivity.this, AccountRecovery.class));});
         changePasswordSetting.setOnClickListener(v -> { startActivity(new Intent(SettingsActivity.this, ChangePassword.class));});
         closeAccountSetting.setOnClickListener(v -> {});
-        changePhoneNumberSetting.setOnClickListener(v -> {});
+        changePhoneNumberSetting.setOnClickListener(v -> { startActivity(new Intent(SettingsActivity.this, ChangePhoneNumber.class));});
         privacyPolicySetting.setOnClickListener(v -> {});
         termsAndConditionsSetting.setOnClickListener(v -> {});
         licenseSetting.setOnClickListener(v -> {});

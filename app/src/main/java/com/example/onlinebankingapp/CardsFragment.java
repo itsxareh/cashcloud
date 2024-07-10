@@ -38,7 +38,6 @@ public class CardsFragment extends Fragment {
                 if (userData != null && userData.containsKey("fullName") && userData.containsKey("cards")) {
                     String fullName = (String) userData.get("fullName");
                     usernameText.setText(fullName);
-
                     Map<String, Boolean> cards = (Map<String, Boolean>) userData.get("cards");
                     for (Map.Entry<String, Boolean> entry : cards.entrySet()) {
                         if (entry.getValue()) {
