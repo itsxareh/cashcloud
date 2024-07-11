@@ -144,13 +144,7 @@ public class PagePhoneVerification extends Fragment {
                     setInProgress(false);
                     if (task.isSuccessful()) {
                         String userUID = task.getResult().getUser().getUid();
-//                        linkPhoneNumberToEmailAccount(credential, userUID);
-                        if (isPhoneLogin) {
-                            Log.d("UserUID", userUID);
-                        }
-                        handlePostLogin(userUID);
-                        Log.d("Reason", userUID);
-                        Log.d("Reason", getReason());
+                        handlePostVerify(userUID);
                         otpCode.setText("");
                     } else {
                         String message = "Something went wrong, please try again later.";
@@ -161,7 +155,7 @@ public class PagePhoneVerification extends Fragment {
                     }
                 });
     }
-    private void handlePostLogin(String userUID) {
+    private void handlePostVerify(String userUID) {
         if (reason.equals("Change Phone Number")) {
             navigateToChangeMobileNumber();
         } else if (reason.equals("New Number")) {
@@ -401,14 +395,14 @@ public class PagePhoneVerification extends Fragment {
                         }
                     }
                 });
-//        db.collection("users").document(oldUserId).delete().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                navigateToMainActivity();
-//            } else {
-//                String errorMessage = task.getException().getMessage();
-//                Toast.makeText(getActivity(), "Failed to delete old user data: " + errorMessage, Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        db.collection("users").document(oldUserId).delete().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                navigateToMainActivity();
+            } else {
+                String errorMessage = task.getException().getMessage();
+                Toast.makeText(getActivity(), "Failed to delete old user data: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
     private String generateExpirationDate() {

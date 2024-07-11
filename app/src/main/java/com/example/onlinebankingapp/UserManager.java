@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
 import java.util.Map;
 
 public class UserManager {
@@ -118,6 +119,26 @@ public class UserManager {
                 .addOnFailureListener(e -> {
                     callback.onFailure(e);
                 });
+    }
+    public void getAccountsByType(String userId, String accountType, AccountsCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("accounts")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("accountType", accountType)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<DocumentSnapshot> accounts = task.getResult().getDocuments();
+                        callback.onAccountsLoaded(accounts);
+                    } else {
+                        callback.onFailure(task.getException());
+                    }
+                });
+    }
+
+    public interface AccountsCallback {
+        void onAccountsLoaded(List<DocumentSnapshot> accounts);
+        void onFailure(Exception e);
     }
     public interface TransactionCallback {
         void onTransactionLoaded(AppTransaction transaction);
