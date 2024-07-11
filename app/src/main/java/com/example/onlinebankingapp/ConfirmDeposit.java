@@ -129,7 +129,7 @@ public class ConfirmDeposit extends AppCompatActivity {
             // Create the wallet transaction document
             String walletTransactionId = UUID.randomUUID().toString();
             Map<String, Object> walletTransaction = new HashMap<>();
-            walletTransaction.put("amount", depositAmount);
+            walletTransaction.put("amount", -depositAmount);
             walletTransaction.put("dateTime", Calendar.getInstance(TimeZone.getTimeZone("Asia/Manila")).getTimeInMillis());
             walletTransaction.put("type", "Withdrawal");
             walletTransaction.put("reference", walletTransactionId);

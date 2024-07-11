@@ -48,7 +48,7 @@ public class DepositAmount extends AppCompatActivity {
         numberFormat.setMinimumFractionDigits(2);
         numberFormat.setMaximumFractionDigits(2);
         formatedWalletBalance = numberFormat.format(walletBalance);
-        currentBalance.setText("You have ₱" + String.format(Locale.getDefault(), "%.2f", formatedWalletBalance) + " in your wallet");
+        currentBalance.setText("You have ₱" + formatedWalletBalance + " in your wallet");
 
         userManager = UserManager.getInstance();
         loadUserPhoneNumber();

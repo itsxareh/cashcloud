@@ -32,22 +32,22 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL("http://127.0.0.1:5500/");
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    try {
-                        InputStream in = urlConnection.getInputStream();
-                    } finally {
-                        urlConnection.disconnect();
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    URL url = new URL("http://127.0.0.1:5500/");
+//                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                    try {
+//                        InputStream in = urlConnection.getInputStream();
+//                    } finally {
+//                        urlConnection.disconnect();
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
         userManager = UserManager.getInstance();
 

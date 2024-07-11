@@ -60,6 +60,7 @@ public class PagePhoneVerification extends Fragment {
     public void setReason(String reason) {
         this.reason = reason;
     }
+    private boolean isPhoneLogin = false;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,18 +143,12 @@ public class PagePhoneVerification extends Fragment {
                 .addOnCompleteListener(task -> {
                     setInProgress(false);
                     if (task.isSuccessful()) {
-
                         String userUID = task.getResult().getUser().getUid();
 //                        linkPhoneNumberToEmailAccount(credential, userUID);
-                        if (reason.equals("Change Phone Number")){
-                            navigateToChangeMobileNumber();
-                        } else if (reason.equals("New Number")){
-                            updatePhoneNumber(uid);
-                        } else if (reason.equals("Start Savings")){
-                            startSavingsAccount(mAuth.getCurrentUser().getUid());
-                        } else {
-                            checkAndSaveUserData(userUID);
+                        if (isPhoneLogin) {
+                            Log.d("UserUID", userUID);
                         }
+                        handlePostLogin(userUID);
                         Log.d("Reason", userUID);
                         Log.d("Reason", getReason());
                         otpCode.setText("");
@@ -166,7 +161,17 @@ public class PagePhoneVerification extends Fragment {
                     }
                 });
     }
-
+    private void handlePostLogin(String userUID) {
+        if (reason.equals("Change Phone Number")) {
+            navigateToChangeMobileNumber();
+        } else if (reason.equals("New Number")) {
+            updatePhoneNumber(uid);
+        } else if (reason.equals("Start Savings")) {
+            startSavingsAccount(mAuth.getCurrentUser().getUid());
+        } else {
+            checkAndSaveUserData(userUID);
+        }
+    }
 //    private void linkPhoneNumberToEmailAccount(PhoneAuthCredential credential, String userUID) {
 //        mAuth.getCurrentUser().linkWithCredential(credential)
 //                .addOnCompleteListener(task -> {
@@ -200,30 +205,24 @@ public class PagePhoneVerification extends Fragment {
     }
 
     private void saveUserData(String userUID) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Map<String, Object> user = new HashMap<>();
-                        user.put("fullName", fullName);
-                        user.put("email", email);
-                        user.put("countryCode", countryCode);
-                        user.put("phoneNumber", phoneNumber);
-                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-                        user.put("password", hashedPassword);
-                        user.put("accounts", new HashMap<String, Boolean>());
+        Map<String, Object> user = new HashMap<>();
+        user.put("fullName", fullName);
+        user.put("email", email);
+        user.put("countryCode", countryCode);
+        user.put("phoneNumber", phoneNumber);
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        user.put("password", hashedPassword);
+        user.put("accounts", new HashMap<String, Boolean>());
 
-                        db.collection("users")
-                                .document(userUID)
-                                .set(user)
-                                .addOnSuccessListener(aVoid -> {
-                                    createWalletAccount(userUID);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Utility.showToast(getActivity(), "Failed to save user information: " + e.getMessage());
-                                });
-                    } else {
-                        Utility.showToast(getActivity(), "Failed to create user with email: " + task.getException().getMessage());
-                    }
+        db.collection("users")
+                .document(userUID)
+                .set(user)
+                .addOnSuccessListener(aVoid -> {
+                    createWalletAccount(userUID);
+                })
+                .addOnFailureListener(e -> {
+                    setInProgress(false);
+                    Utility.showToast(getActivity(), "Failed to save user information: " + e.getMessage());
                 });
     }
 
@@ -402,14 +401,14 @@ public class PagePhoneVerification extends Fragment {
                         }
                     }
                 });
-        db.collection("users").document(oldUserId).delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                navigateToMainActivity();
-            } else {
-                String errorMessage = task.getException().getMessage();
-                Toast.makeText(getActivity(), "Failed to delete old user data: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        db.collection("users").document(oldUserId).delete().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                navigateToMainActivity();
+//            } else {
+//                String errorMessage = task.getException().getMessage();
+//                Toast.makeText(getActivity(), "Failed to delete old user data: " + errorMessage, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
     private String generateExpirationDate() {

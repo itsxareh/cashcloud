@@ -2,6 +2,7 @@ package com.example.onlinebankingapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,13 +31,13 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ViewHolder;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class SavingsFragment extends Fragment {
+    private static final String TAG = "SavingsFragment";
+
     Button startSavingButton;
     RelativeLayout mySavingsLayout;
     ImageButton showBalanceButton;
@@ -46,10 +47,11 @@ public class SavingsFragment extends Fragment {
     FirebaseAuth mAuth;
     private boolean isBalanceVisible = true;
     private String currentBalance = "";
-    private String savingsBalanceText = "";
     private String saccountNumber = "";
+
     public SavingsFragment () {
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.savings_fragment, container, false);
@@ -66,7 +68,6 @@ public class SavingsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        loadUserData();
         showBalanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +85,7 @@ public class SavingsFragment extends Fragment {
                 isBalanceVisible = !isBalanceVisible;
             }
         });
+
         startSavingButton.setOnClickListener(v -> {
             final DialogPlus dialogPlus = DialogPlus.newDialog(getContext())
                     .setContentHolder(new ViewHolder(R.layout.dialogstartsavings))
@@ -97,10 +99,10 @@ public class SavingsFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     String userId = mAuth.getCurrentUser().getUid();
-                    db.collection("users").document(userId).get().addOnCompleteListener(task ->{
-                        if (task.isSuccessful()){
+                    db.collection("users").document(userId).get().addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
-                            if (document.exists()){
+                            if (document.exists()) {
                                 String countryCode = document.getString("countryCode");
                                 String phoneNumber = document.getString("phoneNumber");
                                 sendOtpToPhoneNumber(phoneNumber, countryCode);
@@ -111,11 +113,14 @@ public class SavingsFragment extends Fragment {
                 }
             });
         });
+
         mySavingsLayout.setOnClickListener(v -> startActivity(new Intent(getActivity(), MySavingsAccount.class)));
+
+        loadUserData();
         return rootView;
     }
 
-    private void sendOtpToPhoneNumber(String phoneNumber, String countryCode){
+    private void sendOtpToPhoneNumber(String phoneNumber, String countryCode) {
         String fullPhoneNumber = countryCode + phoneNumber;
         PhoneAuthOptions options = PhoneAuthOptions.newBuilder(mAuth)
                 .setPhoneNumber(fullPhoneNumber)
@@ -131,8 +136,9 @@ public class SavingsFragment extends Fragment {
                     public void onVerificationFailed(@NonNull FirebaseException e) {
 
                     }
+
                     @Override
-                    public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken){
+                    public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         PagePhoneVerification fragment = new PagePhoneVerification();
                         Bundle bundle = new Bundle();
                         bundle.putString("reason", "Start Savings");
@@ -153,19 +159,27 @@ public class SavingsFragment extends Fragment {
     }
 
     private void loadUserData() {
+        Log.d(TAG, "Loading user data...");
         userManager.getUserData(new UserManager.UserDataCallback() {
             @Override
             public void onDataLoaded(Map<String, Object> userData) {
+                Log.d(TAG, "User data loaded: " + userData);
                 if (userData != null && userData.containsKey("accounts")) {
                     Map<String, Boolean> accounts = (Map<String, Boolean>) userData.get("accounts");
                     for (String accountId : accounts.keySet()) {
                         userManager.getAccountData(accountId, new UserManager.AccountDataCallback() {
                             @Override
                             public void onAccountLoaded(DocumentSnapshot accountData) {
+                                Log.d(TAG, "Account data loaded: " + accountData.getData());
                                 if (accountData.exists() && "savings".equals(accountData.getString("accountType"))) {
                                     Double balance = accountData.getDouble("balance");
                                     String storedAccountNumber = accountData.getString("accountNumber");
-                                    if (balance != null) {
+                                    startSavingButton.setEnabled(false);
+                                    myAccountText.setVisibility(View.VISIBLE);
+                                    mySavingsLayout.setVisibility(View.VISIBLE);
+                                    mySavingsLayout.setEnabled(true);
+                                    startSavingButton.setVisibility(View.GONE);
+                                    if (storedAccountNumber != null && !storedAccountNumber.isEmpty()) {
                                         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
                                         numberFormat.setMinimumFractionDigits(2);
                                         numberFormat.setMaximumFractionDigits(2);
@@ -174,39 +188,49 @@ public class SavingsFragment extends Fragment {
                                         savingsBalance.setText(currentBalance);
                                         saccountNumber = formatAccountNumber(storedAccountNumber);
                                         accountNumber.setText(saccountNumber);
-                                        startSavingButton.setEnabled(false);
+                                        Log.d(TAG, "Savings account found: " + accountData.getString("userId"));
+                                        Log.d(TAG, "Current balance: " + currentBalance);
+                                        Log.d(TAG, "Account number: " + saccountNumber);
                                     } else {
-                                        myAccountText.setVisibility(View.GONE);
-                                        mySavingsLayout.setVisibility(View.GONE);
-                                        startSavingButton.setVisibility(View.VISIBLE);
                                         currentBalance = "0.00";
                                         balanceAmount.setText(currentBalance);
+                                        Log.d(TAG, "No valid savings account number found");
                                     }
+                                } else {
+                                    Log.d(TAG, "Account is not a savings account or does not exist");
+                                    myAccountText.setVisibility(View.GONE);
+                                    mySavingsLayout.setVisibility(View.GONE);
+                                    mySavingsLayout.setEnabled(false);
+                                    startSavingButton.setVisibility(View.VISIBLE);
                                 }
                             }
 
                             @Override
                             public void onFailure(Exception e) {
                                 balanceAmount.setText("Error");
+                                Log.e(TAG, "Failed to load account data", e);
                             }
                         });
                     }
+                } else {
+                    Log.d(TAG, "No accounts found for user");
                 }
             }
 
             @Override
             public void onFailure(Exception e) {
                 balanceAmount.setText("Error");
+                Log.e(TAG, "Failed to load user data", e);
             }
         });
     }
-    private String formatAccountNumber(String cardNumber){
-        if (cardNumber == null || cardNumber.length() < 8){
+
+    private String formatAccountNumber(String cardNumber) {
+        if (cardNumber == null || cardNumber.length() < 8) {
             return "";
         }
         StringBuilder maskedCardNumber = new StringBuilder("•••• •••• ");
         maskedCardNumber.append(cardNumber.substring(8).replaceAll("(.{4})", "$1 ").trim());
         return maskedCardNumber.toString().trim();
     }
-
 }

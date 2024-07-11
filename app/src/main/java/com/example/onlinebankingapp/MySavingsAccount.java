@@ -118,7 +118,7 @@ public class MySavingsAccount extends AppCompatActivity {
                                             numberFormat.setMaximumFractionDigits(2);
                                             currentBalance = numberFormat.format(balance);
                                             balanceAmount.setText(currentBalance);
-                                            accountNumber.setText(formatAccountNumber(storedAccountNumber));
+                                            accountNumber.setText(storedAccountNumber);
                                             savingsNumber = accountNumber.getText().toString();
                                             savingsAccountId = accountId;
                                         } else {
@@ -153,12 +153,5 @@ public class MySavingsAccount extends AppCompatActivity {
                 balanceAmount.setText("Error");
             }
         });
-    }
-
-    private String formatAccountNumber(String cardNumber) {
-        if (cardNumber == null) {
-            return "";
-        }
-        return cardNumber.replaceAll("(.{4})", "$1 ").trim();
     }
 }

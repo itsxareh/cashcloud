@@ -110,29 +110,23 @@ public class AccountRecovery extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
         if (user != null && !newEmail.isEmpty() && !newEmail.equals(userEmail)) {
-            // Assume the phone number and verification code are obtained through the UI or another method
             String phoneNumber = "+639212870742";
-            String verificationCode = "111111"; // Replace with the actual verification code
+            String verificationCode = "111111";
 
-            // Create PhoneAuthCredential with the verification code
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode, phoneNumber);
 
-            // Re-authenticate the user
             user.reauthenticate(credential).addOnCompleteListener(reauthTask -> {
                 if (reauthTask.isSuccessful()) {
-                    // If re-authentication is successful, proceed with email update
                     user.verifyBeforeUpdateEmail(newEmail).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(AccountRecovery.this, "Verification email sent to the new email address. Please verify to complete the update.", Toast.LENGTH_SHORT).show();
                         } else {
-                            // Log the error message for debugging
                             Log.e("changeEmailAddress", "Failed to send verification email", task.getException());
                             String errorMessage = task.getException() != null ? task.getException().getMessage() : "Unknown error";
                             Toast.makeText(AccountRecovery.this, "Failed to send verification email: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
-                    // Handle re-authentication failure
                     Log.e("changeEmailAddress", "Re-authentication failed", reauthTask.getException());
                     String errorMessage = reauthTask.getException() != null ? reauthTask.getException().getMessage() : "Unknown error";
                     Toast.makeText(AccountRecovery.this, "Re-authentication failed: " + errorMessage, Toast.LENGTH_SHORT).show();

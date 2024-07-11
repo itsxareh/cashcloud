@@ -75,7 +75,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         intent.putExtra("reference", transaction.getReference());
 
         // Log the date for debugging
-        Log.d("TransactionAdapter", "DATE TIME: " + transaction.getDate());
+        Log.d("TransactionAdapter", "DATE TIME: " + transaction.getDescription());
 
         if ("Send money".equals(transactionType) || "Received money".equals(transactionType)) {
             String reference = transaction.getReference();

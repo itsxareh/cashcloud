@@ -49,12 +49,23 @@ public class ReceiptActivity extends AppCompatActivity {
                 recipientName.setText(description);
                 recipientNo.setText("Payment method");
 
-            } else if (titlePage != null && titlePage.equals("Received money")){
-                String fullName = getIntent().getStringExtra("fullName");
-                String countryCode = getIntent().getStringExtra("countryCode");
-                String phoneNumber = getIntent().getStringExtra("phoneNumber");
+            } else if (titlePage != null && titlePage.equals("Withdrawal")){
                 receiptTitle.setText(titlePage);
-                String description = getIntent().getStringExtra("sender");
+                String description = getIntent().getStringExtra("description");
+
+                successfullySent.setText("Successfully sent");
+                recipientName.setText(description);
+                recipientNo.setText("");
+            } else if (titlePage != null && titlePage.equals("Deposit")){
+                receiptTitle.setText(titlePage);
+                String description = getIntent().getStringExtra("description");
+
+                successfullySent.setText("Successfully received");
+                recipientName.setText(description);
+                recipientNo.setText("");
+            } else if (titlePage != null && titlePage.equals("Received money")){
+                receiptTitle.setText(titlePage);
+                String description = getIntent().getStringExtra("description");
 
                 successfullySent.setText("Received money");
                 recipientName.setText(description);

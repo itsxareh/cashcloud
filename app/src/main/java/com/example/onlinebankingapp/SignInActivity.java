@@ -145,9 +145,11 @@ public class SignInActivity extends AppCompatActivity {
                                 String userUID = document.getId();
                                 sendOtpToPhoneNumber(phoneNumber, countryCode);
                             } else {
+                                loginPassword.setText("");
                                 Toast.makeText(SignInActivity.this, "Invalid phone number or password", Toast.LENGTH_SHORT).show();
                             }
                         } else {
+                            loginPassword.setText("");
                             Toast.makeText(SignInActivity.this, "Invalid phone number or password", Toast.LENGTH_SHORT).show();
                         }
                     }
